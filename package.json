@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "bufferutil": "^4.0.8",
+    "chrono-node": "^2.7.5",
+    "discord.js": "^14.14.1",
+    "install": "^0.13.0",
+    "npm": "^10.5.0",
+    "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7",
+    "utf-8-validate": "^6.0.3",
+    "zlib-sync": "^0.1.9"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
