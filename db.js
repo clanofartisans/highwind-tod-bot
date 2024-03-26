@@ -1,31 +1,31 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	storage: 'database.sqlite',
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'database.sqlite',
 });
 
 const TODs = sequelize.define('tods', {
-	id: {
-		type: DataTypes.INTEGER,
-		autoIncrement: true,
-		primaryKey: true,
-	},
-	name: {
-		type: DataTypes.STRING,
-	},
-	time: {
-		type: DataTypes.DATE,
-	},
-	user: {
-		type: DataTypes.STRING,
-	},
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    name: {
+        type: DataTypes.STRING,
+    },
+    time: {
+        type: DataTypes.DATE,
+    },
+    user: {
+        type: DataTypes.STRING,
+    },
 });
 
 async function getAllTODs() {
-	return sequelize.query(`
+    return sequelize.query(`
     SELECT 
       t.name,
       t.time,
@@ -37,6 +37,6 @@ async function getAllTODs() {
 }
 
 module.exports = {
-	TODs,
-	getAllTODs,
+    TODs,
+    getAllTODs,
 };
