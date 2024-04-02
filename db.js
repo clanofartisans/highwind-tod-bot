@@ -5,6 +5,10 @@ const sequelize = new Sequelize('database', 'user', 'password', {
     dialect: 'sqlite',
     logging: false,
     storage: 'database.sqlite',
+    dialectOptions: {
+        useUTC: true,
+    },
+    timezone: '+00:00',
 });
 
 const TODs = sequelize.define('tods', {
@@ -24,7 +28,41 @@ const TODs = sequelize.define('tods', {
     },
 });
 
-async function getAllTODs() {
+const Servers = sequelize.define('servers', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    discord_id: {
+        type: DataTypes.INTEGER,
+    },
+    name: {
+        type: DataTypes.STRING,
+    },
+    readonly: {
+        type: DataTypes.BOOLEAN,
+    },
+});
+
+const Users = sequelize.define('users', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    discord_id: {
+        type: DataTypes.INTEGER,
+    },
+    discord_nick: {
+        type: DataTypes.STRING,
+    },
+    timezone: {
+        type: DataTypes.STRING,
+    },
+});
+
+async function fetchTODs() {
     return sequelize.query(`
     SELECT 
       t.name,
@@ -36,7 +74,14 @@ async function getAllTODs() {
   `, { model: TODs, mapToModel: true });
 }
 
+async function fetchUser($discordId) {
+    return Users.findOne({ where: { discord_id: $discordId } });
+}
+
 module.exports = {
     TODs,
-    getAllTODs,
+    Servers,
+    Users,
+    fetchTODs,
+    fetchUser,
 };
