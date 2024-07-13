@@ -17,9 +17,8 @@ async function buildTZButton(discordUser) {
         .addComponents([tz]);
 }
 
-async function calculateTimestamp(interaction) {
+function calculateTimestamp(interaction, localUser) {
     const input = interaction.fields.getTextInputValue('todInput');
-    const localUser = await fetchUser(interaction.user.id);
 
     if (input) {
         if (input.includes(':')) {
@@ -29,7 +28,7 @@ async function calculateTimestamp(interaction) {
                 return moment.tz(formatted, localUser.timezone);
             }
             else {
-                const tzMenu = await buildTZButton(interaction.user);
+                const tzMenu = buildTZButton(interaction.user);
                 return interaction.reply({ content: 'You need to set your timezone before you can tag a specific time.', components: [tzMenu], ephemeral: true });
             }
         }
@@ -46,9 +45,11 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
 
+        const localUser = await fetchUser(interaction.user.id);
+
         let timestamp;
 
-        timestamp = await calculateTimestamp(interaction);
+        timestamp = calculateTimestamp(interaction, localUser);
 
         const tod = await TODs.create({
             name: 'San d\'Oria',

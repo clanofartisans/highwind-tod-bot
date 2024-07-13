@@ -74,8 +74,8 @@ async function fetchTODs() {
   `, { model: TODs, mapToModel: true });
 }
 
-async function fetchUser($discordId) {
-    return Users.findOne({ where: { discord_id: $discordId } });
+async function fetchUser(discordId) {
+    return Users.findOne({ where: { discord_id: discordId } });
 }
 
 module.exports = {
