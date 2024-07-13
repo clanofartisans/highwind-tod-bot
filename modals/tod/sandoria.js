@@ -3,6 +3,16 @@ const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('
 const chrono = require('chrono-node');
 const moment = require('moment-timezone');
 
+function isEmpty(value) {
+    if (value === null) return true;
+    if (value === undefined) return true;
+    if (value === false) return true;
+    if (value === 0) return true;
+    if (value === '') return true;
+    if (Array.isArray(value) && value.length === 0) return true;
+    return false;
+}
+
 function pad(number) {
     return String(number).padStart(2, '0');
 }
@@ -24,8 +34,11 @@ function calculateTimestamp(interaction, localUser) {
         if (input.includes(':')) {
             if (localUser && localUser.timezone) {
                 const parsed = chrono.parse(input);
-                const formatted = parsed[0].start.get('year') + '-' + pad(parsed[0].start.get('month')) + '-' + pad(parsed[0].start.get('day')) + 'T' + pad(parsed[0].start.get('hour')) + ':' + pad(parsed[0].start.get('minute')) + ':' + pad(parsed[0].start.get('second'));
-                return moment.tz(formatted, localUser.timezone);
+
+                if (!isEmpty(parsed)) {
+                    const formatted = parsed[0].start.get('year') + '-' + pad(parsed[0].start.get('month')) + '-' + pad(parsed[0].start.get('day')) + 'T' + pad(parsed[0].start.get('hour')) + ':' + pad(parsed[0].start.get('minute')) + ':' + pad(parsed[0].start.get('second'));
+                    return moment.tz(formatted, localUser.timezone);
+                }
             }
             else {
                 const tzMenu = buildTZButton(interaction.user);
@@ -33,7 +46,11 @@ function calculateTimestamp(interaction, localUser) {
             }
         }
         else {
-            return chrono.parseDate(input);
+            const parsed = chrono.parseDate(input);
+
+            if (!isEmpty(parsed)) {
+                return parsed;
+            }
         }
     }
 
