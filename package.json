@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@sentry/node": "^8.17.0",
     "bufferutil": "^4.0.8",
     "chrono-node": "^2.7.5",
     "discord.js": "^14.14.1",

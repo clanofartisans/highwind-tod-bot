@@ -1,6 +1,12 @@
+const Sentry = require('@sentry/node');
+const { sentryDSN, token } = require('./config.json');
+
+Sentry.init({
+    dsn: sentryDSN,
+});
+
 const fs = require('node:fs');
 const path = require('node:path');
-const { token } = require('./config.json');
 
 // Build the Client
 
