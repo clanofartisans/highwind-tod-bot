@@ -2,6 +2,7 @@ const { TODs, fetchUser } = require('../../db');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const chrono = require('chrono-node');
 const moment = require('moment-timezone');
+const Sentry = require('@sentry/node');
 
 function isEmpty(value) {
     if (value === null) return true;
@@ -17,7 +18,7 @@ function pad(number) {
     return String(number).padStart(2, '0');
 }
 
-async function buildTZButton(discordUser) {
+async function buildTZButton() {
     const tz = new ButtonBuilder()
         .setCustomId('tz')
         .setLabel('Set Your Timezone')
@@ -41,8 +42,7 @@ function calculateTimestamp(interaction, localUser) {
                 }
             }
             else {
-                const tzMenu = buildTZButton(interaction.user);
-                return interaction.reply({ content: 'You need to set your timezone before you can tag a specific time.', components: [tzMenu], ephemeral: true });
+                return 'tz-needed';
             }
         }
         else {
@@ -62,11 +62,23 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
 
+        Sentry.setContext('discord', {
+            server: interaction.guild.name,
+            username: interaction.user.username,
+            displayName: interaction.user.displayName,
+        });
+
         const localUser = await fetchUser(interaction.user.id);
 
         let timestamp;
 
         timestamp = calculateTimestamp(interaction, localUser);
+
+        if (timestamp === 'tz-needed') {
+            const tzMenu = await buildTZButton();
+            await interaction.followUp({ content: 'You need to set your timezone before you can tag a specific time.', components: [tzMenu], ephemeral: true });
+            return;
+        }
 
         const tod = await TODs.create({
             name: 'San d\'Oria',
