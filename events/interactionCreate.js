@@ -3,6 +3,8 @@ const fs = require('node:fs');
 
 const { Events, Collection } = require('discord.js');
 
+const { blocks } = require('../config.json');
+
 // Configure Buttons
 
 let buttons = new Collection();
@@ -77,6 +79,12 @@ for (const folder of selectFolders) {
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction) {
+        // Block users if their username is in the blocks list
+        if (blocks.includes(interaction.user.username)) {
+            console.log(`Blocked interaction from ${interaction.user.username}`);
+            return;
+        }
+
         // Commands
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
